@@ -1,0 +1,58 @@
+name: authenticate-project-bom
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  authenticate-go-project-and-binary-with-bom:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Authenticate Go project with BoM
+        #--> Run the GitHub action
+        # uses: codenotary/vcn-authenticate-bom-go-github-action@v1.0.0
+        uses: codenotary/vcn-authenticate-bom-go-github-action@main
+        with:
+          asset: git://.
+          cnil_host: ${{ secrets.CNIL_HOST }}
+          cnil_grpc_port: ${{ secrets.CNIL_GRPC_PORT }}
+          cnil_api_key: ${{ secrets.CNIL_API_KEY }}
+          # the signer ID is always required (even if it's the same as the one of the CNIL API key)
+          # - hardcode it here
+          signer_id: OggVCNAPIKey1
+          # - or pick it from the event:
+          # signer_id: ${{ github.event.sender.login }}@github
+        #<--
+        #--> or run the vcn Docker image directly (all vcn flags are available and passed through)
+        # uses: docker://codenotary/vcn:bom-golang
+        # with:
+        #   args: a git://. --lc-host ${{ secrets.CNIL_HOST }} --lc-port ${{ secrets.CNIL_GRPC_PORT }} --lc-api-key ${{ secrets.CNIL_API_KEY }} --signerID ${{ github.event.sender.login }}@github --bom
+        #<--
+
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16.x
+
+      - name: Build Go binary
+        run: go build .
+
+      - name: Authenticate Go binary with BoM
+        #--> Run the GitHub action
+        # uses: codenotary/vcn-authenticate-bom-go-github-action@v1.0.0
+        uses: codenotary/vcn-authenticate-bom-go-github-action@main
+        with:
+          asset: example-go-project
+          cnil_host: ${{ secrets.CNIL_HOST }}
+          cnil_grpc_port: ${{ secrets.CNIL_GRPC_PORT }}
+          cnil_api_key: ${{ secrets.CNIL_API_KEY }}
+          signer_id: OggVCNAPIKey1
+        #<--
+        #--> or run the vcn Docker image directly (all vcn flags are available and passed through)
+        # uses: docker://codenotary/vcn:bom-golang
+        # with:
+        #   args: a example-go-project --lc-host ${{ secrets.CNIL_HOST }} --lc-port ${{ secrets.CNIL_GRPC_PORT }} --lc-api-key ${{ secrets.CNIL_API_KEY }} --signerID ${{ github.event.sender.login }}@github --bom
+        #<--
