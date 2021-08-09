@@ -13,8 +13,8 @@ jobs:
 
       - name: Authenticate Go project with BoM
         #--> Run the GitHub action
-        # uses: codenotary/vcn-authenticate-bom-go-github-action@v1.0.0
-        uses: codenotary/vcn-authenticate-bom-go-github-action@main
+        uses: codenotary/vcn-authenticate-bom-go-github-action@v1.0.0
+        # uses: codenotary/vcn-authenticate-bom-go-github-action@main
         with:
           asset: git://.
           cnil_host: ${{ secrets.CNIL_HOST }}
@@ -42,8 +42,8 @@ jobs:
 
       - name: Authenticate Go binary with BoM
         #--> Run the GitHub action
-        # uses: codenotary/vcn-authenticate-bom-go-github-action@v1.0.0
-        uses: codenotary/vcn-authenticate-bom-go-github-action@main
+        uses: codenotary/vcn-authenticate-bom-go-github-action@v1.0.0
+        # uses: codenotary/vcn-authenticate-bom-go-github-action@main
         with:
           asset: example-go-project
           cnil_host: ${{ secrets.CNIL_HOST }}
